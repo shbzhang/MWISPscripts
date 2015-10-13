@@ -1,0 +1,38 @@
+set variable position write
+file in &1.rgd
+sic del &1.bas
+file out &1.bas si
+find /all
+for i 1 to found
+get next
+set mode x &2 &3
+set win &4 &5 &6 &7 &8 &9
+base 1
+write
+next
+
+set angle min
+set weight sigma
+file in &1.bas
+sic del &1.sum
+file out &1.sum si
+define real glat
+let glat 0
+find /range -0.5 0.5 -40.5 -39.5
+if found.GT.0 then
+let glat -30
+endif
+for i -22.5 to 22.5 by 0.5
+for j -22.5 to 22.5 by 0.5
+find /offset i j+glat
+if found.GT.0
+average
+base 1
+let telescope "DLH14m"
+write
+endif
+next
+next
+sic del &1.bas
+say "Sum observations of same position has been finished"
+exit

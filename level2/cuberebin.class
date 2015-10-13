@@ -1,0 +1,33 @@
+sic del cuberebin.bur
+sic del &1.figs.gdf
+sic del cuberebin.reb
+sic del cuberebin.tab
+sic del cuberebin.lmv
+sic del cuberebin.wei
+sic del &1_reb.fits
+
+file out cuberebin.bur single
+lmv &1.fits
+file in cuberebin.bur
+file out cuberebin.reb single
+find
+for i 1 to found
+get n
+resample 200 100 0 1 v
+write
+next
+
+let map%beam 52
+let map%like &1.fits
+file in cuberebin.reb
+find
+table cuberebin new
+xy_map cuberebin /nogrid
+vector\fits &1_reb.fits from cuberebin.lmv
+
+sic del cuberebin.bur
+sic del &1.figs.gdf
+sic del cuberebin.reb
+sic del cuberebin.tab
+sic del cuberebin.lmv
+sic del cuberebin.wei

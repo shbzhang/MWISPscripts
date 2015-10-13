@@ -1,0 +1,47 @@
+file in &1.sum
+sic del &1.res
+file out &1.bas si
+find /all
+for i 1 to found
+get next
+set mode x &2 &3
+set win &4 &5 &6 &7 &8 &9
+base 1
+write
+next
+
+let map%beam 52
+let map%like ../grid/&1_grid.fits
+file in &1&2.sum
+sic delete &1&2.tab
+sic delete &1&2.lmv
+sic delete &1&2.wei
+find
+if found.GT.0 then
+table &1&2 new /resample 201 101 0 1 v
+xy_map &1&2 /nogrid
+sic del &1&2_res.fits
+vector\fits &1&2_res.fits from &1&2.lmv /bits -32
+
+!sigma image
+sic del &1&2.sig
+file out &1&2.sig s
+find
+for i 1 to found
+  get n
+  resample 3 2 0 2 v
+  let ry sigma
+  write
+next
+file in &1&2.sig
+find
+table &1&2 new /math tpeak(0)
+xy_map &1&2 /nogrid
+sic del &1&2_rms.fits
+vector\fits &1&2_rms.fits from &1&2.lmv /bits -32
+
+endif
+sic delete &1&2.tab
+sic delete &1&2.lmv
+sic delete &1&2.wei
+exit

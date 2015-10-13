@@ -1,0 +1,11 @@
+sic find ../G080/&1_*&2.bur
+if dir%nfile.gt.0 then
+sic del ../G080/&1&2.rgd
+file out ../G080/&1&2.rgd s
+for i 1 to dir%nfile
+file in 'dir%file[i]'
+find
+copy
+next
+endif
+exit

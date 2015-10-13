@@ -1,0 +1,12 @@
+file in &1L.rgd
+find
+sic del &1L2.rgd
+file out &1L2.rgd si
+find
+for i 1 to found
+get n
+modify freq 109782.173
+modify line C18O(1-0)
+write
+next
+exit

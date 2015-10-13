@@ -1,0 +1,17 @@
+file in &1.sum
+find
+sic del &1.dat
+print area &2 &3 /output &1.dat
+
+col x 2 y 3 z 4 /file &1.dat
+rgdata x y z /blank -1
+limit /rev x
+clear
+lut rainbow3
+g\set box m
+g\box
+g\plot /scal lin 0 50
+wed
+sic del &1.ps
+hard &1.ps
+exit

@@ -1,0 +1,20 @@
+sic find ~/usbuser/G100+00/&1_*U.bur
+if dir%nfile.gt.0 then
+sic del &1FU.rgd
+file out &1FU.rgd s
+for i 1 to dir%nfile
+file in 'dir%file[i]'
+find
+copy
+next
+
+sic find ~/usbuser/F100+00/&1F*_*U.bur
+if dir%nfile.gt.0 then
+for i 1 to dir%nfile
+file in 'dir%file[i]'
+find
+copy
+next
+endif
+endif
+exit

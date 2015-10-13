@@ -1,0 +1,44 @@
+One-line descriptions of procedures
+
+#level0: table preparation, data download#
+OBSTABLE/OBSLIST: show suitable observing time for the table
+DLBUR: download bur files from DLH database
+DLFITS: download fits files from DLH database
+MAPFILE: quick look the number and position of files in current directory
+
+#level1: preliminary data reduction#
+AIO: put all files in one file
+BAS: baseline fitting
+SUM: average spectra on each position
+MODIFY: modify frequency from 13CO to C18O
+MAKECUBE: regrid to datacube
+AREA: quick look of integrated intensity
+RESAMPLE: resample the spectra and make a new datacube
+GRID: generate grid file for regirding
+CHECKOFFSET: derive possible OFF position from 12CO datacube
+
+#level2: data reduction#
+#DataCube Manipulation#
+CUBEREBIN: rebin the velocity dimension of a datacube
+CUBESMOOTH: convolve a datecube to a specified resolution
+CUBECLIP: clip noise channels in a datecube
+FITS_TRANSPOSE: transpose a datacube, e.g. from (l-b-v) to (l-v-b) or (b-v-l)
+HREBINV: rebin datacube for channel map
+MOSAIC: mosaic cells of DLH survey
+MOSAIC_CELL: mosaic a 30*30 arcmin cell
+REPROJECT: reproject a datecube to a reference coordinate
+
+#Info Extraction#
+AVERSPEC: derive the averaged spectrum of a datacube weighted with rms
+CUBERMS: calculate rms noise for a datacube
+CUBEMOMENT: calculate moment for a datacube
+CUBEMASK: mask a datacube, only keep pixels with nchannels over threshold
+PEAKVELOCITY: derive a peak velocity map of a datacube
+PVSLICE: extract position-velocity map from a datacube
+PVBELT: collapse position-velocity map within a belt of a datacube
+RMSHIST: plot histogram of the rms distribution
+
+#level3: merge data to galactic plane map#
+mosaic_bstrip: mosaic cells to a 1 degree width strip along galactic latitude
+mwispmerge: merge 2-dimensional data (e.g. moment map) to galactic plane map
+

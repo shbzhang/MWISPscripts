@@ -1,0 +1,9 @@
+cuberebin:
+rebin the velocity dimension of a datacube for DLH survey
+rebin step:
+1. edit file cuberebin.class, modify the parameters needed for resample in line 16
+2. open CLASS, use command: @cuberebin filename
+   filename is the name of datacube file without suffix
+3. open IDL, use command: cuberebin, filename
+4. the filename_reb.fits is the result datacube
+
