@@ -1,12 +1,11 @@
 ;by ShaoboZhang
 ;Mosaic fits file of DLH survey
-;Usage: mosaic, gl1, gl2, gb1, gb2, velo1, velo2 [, sb='L', fitspath='./', rmspath='./']
+;Usage: mosaic, gl1, gl2, gb1, gb2, velo1, velo2 [, sb='L', path='./', /display]
 ;Input:
 ;  gl1,gl2,gb1,gb2,velo1,velo2: float scalar. Galactic coordinate range and velocity range.
 ;Input keyword:
 ;  sb: sideband. for 12CO, sb='U'; for 13CO, sb='L'; for C18O, sb='L2'
-;  fitspath: the directory of fits file, ended with '/'
-;  rmspath: the directory of rms file, ended with '/'
+;  path: array of the directories containing datacube and rms files, ended with '/'
 ;  dispaly: whether to display the process on a window. defalut is 1.
 ;Note:
 ;  all the input fits file (data and rms) must be the same as the grid define by template.
@@ -25,6 +24,10 @@
 ;  add the display keywords for users who do not support window
 ;Dec,25,2013,v1.5
 ;  accept rms file created by procedure cuberms
+;Oct,13,2015,v1.6
+;  remove keyword "fitspath" and "rmspath"
+;  new keyword "path" now accepts string array, procedure will 
+;    automatically search datacube and rms file in these directories
 
 function getcellname, gl, gb
 ;get cell name from its gl and gb
@@ -69,15 +72,14 @@ end
 
 
 
-pro mosaic, l1, l2, b1, b2, v1, v2, sb=sb, fitspath=fitspath, rmspath=rmspath, display=display
+pro mosaic, l1, l2, b1, b2, v1, v2, sb=sb, path=path, display=display
 
 if n_params() lt 6 then begin
-    print, 'Syntax - MOSAIC, l1, l2, b1, b2, v1, v2, [sb=, fitspath=, rmspath=, /display ]'
+    print, 'Syntax - MOSAIC, l1, l2, b1, b2, v1, v2, [sb=, path=, /display ]'
     return
 endif
 if ~keyword_set(sb) then sb='U'
-if ~keyword_set(fitspath) then fitspath=''
-if ~keyword_set(rmspath) then rmspath=''
+if ~keyword_set(path) then path=''
 if n_elements(display) eq 0 then display=1
 
 l1 = l1 mod 360 - 360*(l1 gt 300)
@@ -101,8 +103,8 @@ fitsl2 = ceil(l2*2)/2.
 fitsb1 = floor(b1*2)/2.
 fitsb2 = ceil(b2*2)/2.
 print,'Mosaic begins:'
-print,'from '+string(l1 mod 360)+' to '+string(l2 mod 360)
-print,'from '+string(b1)+' to '+string(b2)
+print,'GL from '+string(l1 mod 360)+' to '+string(l2 mod 360)
+print,'GB from '+string(b1)+' to '+string(b2)
 if display then erase
 
 ;mosaic
@@ -113,30 +115,38 @@ for l=double(fitsl2),fitsl1,-0.5 do begin
 for b=double(fitsb1),fitsb2,0.5 do begin
    count += 1
    name = getcellname(l,b)
-   ;read fits file
-   if ~file_test(fitspath+name+sb+'.fits') then begin
+   ;search for cube file
+   cubcan = path+name+sb+'.fits'	;candidate
+   idx = where(file_test(cubcan), ccan)
+   if ccan eq 0 then begin
       print, '['+string(count,format='(I0)')+'/'+fitsnum $
-      +']File "'+fitspath+name+sb+'.fits" does not exist!'
+      +']File "'+name+sb+'.fits" does not exist!'
       continue
    endif
+   cubfile = cubcan[idx[0]]
+   ;search for rms file
+   rmscan = path+name+sb+'_rms.fits'	;candidate
+   idx = where(file_test(rmscan), ccan)   
+   if ccan eq 0 then begin
+      print, '['+string(count,format='(I0)')+'/'+fitsnum $
+      +']RMS file for "'+name+sb+'.fits" does not exist'
+      continue
+      ;fits_read,'rmsmodel.fits',wei
+   endif
+   rmsfile = rmscan[idx[0]]
+   ;read cube files 
    print, '['+string(count,format='(I0)')+'/'+fitsnum $
-   +']Mosaic file "'+name+sb+'.fits'
-   fits_read,fitspath+name+sb+'.fits',dat,hdr
+   +']Mosaic file "'+cubfile
+   fits_read,cubfile,dat,hdr
    if sxpar(hdr,'BITPIX') gt 0 then nan = where(dat eq max(dat), L64) $
    else nan = where(dat eq -1000, L64)
    if nan[0] ne -1 then dat[nan] = 0
    ;read rms file
-   if ~file_test(rmspath+name+sb+'_rms.fits') then begin
-      print, 'RMS file for "'+name+sb+'.fits" does not exist';, use rms model!'
-      continue
-      ;fits_read,'rmsmodel.fits',wei
-   endif else begin
-      fits_read,rmspath+name+sb+'_rms.fits',rms
-      if sxpar(hdr,'BITPIX') gt 0 then nan=where(rms eq max(rms)) $
-      else nan=where(rms eq -1000 or ~finite(rms))
-      if nan[0] ne -1 then rms[nan] = !values.d_infinity
-      wei = 1d/rms^2
-   endelse
+   fits_read,rmsfile,rms
+   if sxpar(hdr,'BITPIX') gt 0 then nan=where(rms eq max(rms)) $
+   else nan=where(rms eq -1000 or ~finite(rms))
+   if nan[0] ne -1 then rms[nan] = !values.d_infinity
+   wei = 1d/rms^2
 
    num += 1
    clipv, dat, hdr, v1, v2
