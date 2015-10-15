@@ -210,6 +210,9 @@ sxdelpar,mhdr,'GLON'
 sxaddpar,mhdr,'BUNIT','K (T_MB)'
 sxaddhist,'MOSAIC: '+systime(0),mhdr
 sxaddhist,'Contain '+string(num,format='(I0)')+' cells.',mhdr
+sxaddhist,'L from '+string(l1)+' to '+string(l2),mhdr
+sxaddhist,'B from '+string(b1)+' to '+string(b2),mhdr
+sxaddhist,'V from '+string(v1)+' to '+string(v2),mhdr
 fits_write,'mosaic_'+sb+'.fits',mdat,mhdr
 fits_write,'mosaic_'+sb+'_weight.fits',mwei,mhdr
 fits_write,'mosaic_'+sb+'_coverage.fits',mcov,mhdr

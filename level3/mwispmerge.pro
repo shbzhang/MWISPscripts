@@ -15,51 +15,6 @@
 ;    mwispmerge, mergefile='mwisp.fits'
 ;History:
 ;Sep,25,2015,v1.0
-pro mwispmerge, imagefile, coveragefile, mergefile=mergefile
-	if n_params() lt 1 and ~keyword_set(mergefile) then begin
-	    print, 'Syntax - MWISPMERGE, imagefile, [coveragefile, [mergefile=]]'
-	    print, 'Syntax - MWISPMERGE, mergefile='
-	    return
-	endif
-	if ~keyword_set(mergefile) then mergefile='mwisp_image.fits'
-	if file_test(mergefile) then fits_read, mergefile, bgdat, bghdr else emptygplane, bgdat, bghdr
-	if n_params() lt 1 then begin
-		fits_write, mergefile, bgdat, bghdr
-		return
-	endif
-	bgdim = size(bgdat,/dimension)
-
-	for i=0,n_elements(imagefile)-1 do begin
-		fits_read, imagefile[i], mdat, mhdr
-		offsetx = sxpar(bghdr,'CRPIX1')-sxpar(mhdr,'CRPIX1')
-		offsety = sxpar(bghdr,'CRPIX2')-sxpar(mhdr,'CRPIX2')
-
-		if n_params() ge 2 and i lt n_elements(coveragefile) then fits_read, coveragefile[i], cov else begin
-			cov = byte(mdat)
-			cov[*] = 1b
-		endelse
-		idx = where(cov, count)
-		if count eq 0 then begin
-			print, 'Warning - region does not cover any pixel: '+imagefile[i]
-			continue
-		endif
-		ii = mdat[idx]
-		xy = array_indices(cov, idx)
-		x = xy[0,*] + offsetx	;xxx
-		y = xy[1,*] + offsety	;xxx
-		in = where(y ge 0 and y le bgdim[1]-1, count)
-		if count eq 0 then begin
-			print, 'Warning - region outside the range of current survey: '+imagefile[i]
-			continue
-		endif
-		x = (x[in]+bgdim[0]) mod bgdim[0]
-		y = y[in]
-		ii = ii[in]
-		bgdat[x,y] = ii
-	endfor
-	fits_write, mergefile, bgdat, bghdr
-end
-
 
 pro emptygplane, bgdat, bghdr, header_only=header_only
 ;generate a empty galactic plane
@@ -98,3 +53,51 @@ pro damegplane
 	bgdat = dat[xx, yy]
 	fits_write,'Wco_DHT2001_mwisp.fits',bgdat,bghdr
 end
+
+pro mwispmerge, imagefile, coveragefile, mergefile=mergefile
+	if n_params() lt 1 and ~keyword_set(mergefile) then begin
+	    print, 'Syntax - MWISPMERGE, imagefile, [coveragefile, [mergefile=]]'
+	    print, 'Syntax - MWISPMERGE, mergefile='
+	    return
+	endif
+	if ~keyword_set(mergefile) then mergefile='mwisp_image.fits'
+	if file_test(mergefile) then fits_read, mergefile, bgdat, bghdr else emptygplane, bgdat, bghdr
+	if n_params() lt 1 then begin
+		fits_write, mergefile, bgdat, bghdr
+		return
+	endif
+	bgdim = size(bgdat,/dimension)
+
+	for i=0,n_elements(imagefile)-1 do begin
+		print, 'Merging file: '+imagefile[i]
+		fits_read, imagefile[i], mdat, mhdr
+		offsetx = sxpar(bghdr,'CRPIX1')-sxpar(mhdr,'CRPIX1')
+		offsety = sxpar(bghdr,'CRPIX2')-sxpar(mhdr,'CRPIX2')
+
+		if n_params() ge 2 and i lt n_elements(coveragefile) then fits_read, coveragefile[i], cov else begin
+			cov = byte(mdat)
+			cov[*] = 1b
+		endelse
+		idx = where(cov, count)
+		if count eq 0 then begin
+			print, 'Warning - region does not cover any pixel: '+imagefile[i]
+			continue
+		endif
+		ii = mdat[idx]
+		xy = array_indices(cov, idx)
+		x = xy[0,*] + offsetx	;xxx
+		y = xy[1,*] + offsety	;xxx
+		in = where(y ge 0 and y le bgdim[1]-1, count)
+		if count eq 0 then begin
+			print, 'Warning - region outside the range of current survey: '+imagefile[i]
+			continue
+		endif
+		x = (x[in]+bgdim[0]) mod bgdim[0]
+		y = y[in]
+		ii = ii[in]
+		bgdat[x,y] = ii
+		sxaddhist,'Merge file: '+imagefile[i],bghdr
+	endfor
+	fits_write, mergefile, bgdat, bghdr
+end
+

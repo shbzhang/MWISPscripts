@@ -1,12 +1,13 @@
 pro mosaic_bstrip, l, v1, v2, path=path
-;l=83
-;fitspath='/home/shbzhang/Lcloud/check/checked/'
-;rmspath='/home/shbzhang/Lcloud/check/checked/'
-;v1=-100 & v2=100
+;mosaic strips along b direction
+if n_params() lt 3 then begin
+    print, 'Syntax - MOSAIC_BSTRIP, l, v1, v2, [path=]'
+    return
+endif
 
 for i=0,n_elements(l)-1 do begin
-outname = 'BSTRIP' + string(l[i],format='(I03)')
-print,outname
+outname = 'BSTRIP_' + string(l[i],format='(I03)')
+print,outname:
 
 mosaic,l[i],l[i]+1,-6,6,v1,v2,sb='U',path=path, display=0
 if file_test('mosaic_U.fits') then begin
@@ -32,13 +33,3 @@ endif
 endfor
 end
 
-
-pro merge_bstrip, l, irange
-mwispmerge,mergefile='mwips_m0.fits'
-for i=0, n_elements(l)-1 do begin
-outname = 'BSTRIP' + string(l[i],format='(I03)')
-if ~file_test(outname+'_U_.fits') then continue
-cubemoment,outname+'_U.fits',irange,/zeroth_only
-mwispmerge,outname+'_U_m0',outname+'_U_coverage.fits',mergefile='mwips_m0.fits'
-endfor
-end
