@@ -39,6 +39,7 @@ PVBELT: collapse position-velocity map within a belt of a datacube
 RMSHIST: plot histogram of the rms distribution
 
 #level3: merge data to galactic plane map#
-mosaic_bstrip: mosaic cells to a 1 degree width strip along galactic latitude
-mwispmerge: merge 2-dimensional data (e.g. moment map) to galactic plane map
+MOSAIC_BSTRIP: mosaic cells to a 1 degree width strip along galactic latitude
+MERGE_BSTRIP: merge moment 0 of b-strips
+MWISPMERGE: merge 2-dimensional data (e.g. moment map) to galactic plane map
 
