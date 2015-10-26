@@ -2,7 +2,8 @@
 ;by ShaoboZhang
 ;History:
 ;Jul,23,2015,v1.0
-
+;Oct,26,2015,v1.1
+;  fix error while the 'cdelt3' is a minus value
 
 pro hrebinv, oldcub, oldhdr, newcub, newhdr, velo1, velo2, nchannel
 ;Rebin velocity axis for channel map
@@ -16,6 +17,7 @@ pro hrebinv, oldcub, oldhdr, newcub, newhdr, velo1, velo2, nchannel
 ;Usage: hrebinv, oldcub, oldhdr, newcub, newhdr, v1, v2, nc
 	if n_params() lt 2 then begin
 	    print, 'Syntax - HREBINV, oldcub, oldhdr, newcub, newhdr, velocity1, velocity2, num_channels'
+	    print, 'Provided velocity should have the same unit as that in oldhdr.'
 	    return
 	endif
 	v2c,oldhdr,velo1,c1
@@ -28,7 +30,7 @@ pro hrebinv, oldcub, oldhdr, newcub, newhdr, velo1, velo2, nchannel
 	for i=0,nchannel-1 do begin
 		if c[i] lt -0.5 or c[i+1] gt olddim[2]-0.5 then begin
 			newcub[*,*,i] = !values.f_nan
-			print, 'Warning - given velocity range exceed the old datacube'
+			print, 'Warning - given velocity range exceeds the old datacube'
 			continue
 		end
 		intc1 = ceil(c[i]+0.5)
@@ -53,10 +55,12 @@ pro hrebinv, oldcub, oldhdr, newcub, newhdr, velo1, velo2, nchannel
 			end
 		endcase
 	endfor
-	newcub *= sxpar(oldhdr, 'CDELT3')	;convert sum(Tmb) to integrated intensity
+	dvold = sxpar(oldhdr,'CDELT3')
+	newcub *= abs(dvold)	;convert sum(Tmb) to integrated intensity
 	newhdr = oldhdr
+	c2v,oldhdr,min([c1,c2]),v0
 	sxaddpar, newhdr, 'NAXIS3', nchannel
 	sxaddpar, newhdr, 'CRPIX3', 1
-	sxaddpar, newhdr, 'CRVAL3', velo1
-	sxaddpar, newhdr, 'CDELT3', (velo2-velo1)/(nchannel-1)
+	sxaddpar, newhdr, 'CRVAL3', v0
+	sxaddpar, newhdr, 'CDELT3', width*dvold
 end
