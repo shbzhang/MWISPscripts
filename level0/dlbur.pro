@@ -1,12 +1,13 @@
-pro dlbur
+pro dlbur, range=range, append=append
 ;Generate download.sh to download bur data from website
 ;Steps:
 ;1. Download webpage "downloadclasslist.php.html" from http://www.radioast.nsdc.cn/
 ;2. Modify gl, gb range in this file
 ;3. run dlbur and get download.sh
 ;4. run download.sh in shell
+if ~keyword_set(range) then range=[0,360,-6,6]
 openr,lunr,'downloadclasslist.php.html',/get_lun
-openw,lunw,'download.sh',/get_lun
+openw,lunw,'download.sh',/get_lun, append=append
 line=''
 WHILE ~ eof(lunr) DO BEGIN
   readf, lunr, line
@@ -34,7 +35,7 @@ WHILE ~ eof(lunr) DO BEGIN
   name=file_basename(path)
   gl=float(strmid(name,0,4))/10
   gb=float(strmid(name,4,4))/10
-  if gl gt 88 or gl lt 83 or gb gt 2 or gb lt -3 then continue;throw bur outside box
+  if gl lt range[0] or gl gt range[1] or gb lt range[2] or gb gt range[3] then continue;throw bur outside box
   print,name,filesize,(file_info(name)).size/1024000d
   if filesize - (file_info(name)).size/1024000d gt 0.1 or (file_info(name)).exists eq 0  then begin
     print,'Will download: '+ name
