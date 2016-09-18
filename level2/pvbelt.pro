@@ -1,4 +1,5 @@
 pro pvbelt, fitsfile, a, d, width, gal=gal, step=step, pcoordiante=pcoordinate
+;OBSOLETE, replaced by new version of PVSLICE
 ;Collapse position-velocity map of a belt from a data cube
 ;Only accept celestial and Galactic system
 ;Input:
