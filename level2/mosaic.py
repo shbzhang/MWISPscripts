@@ -7,6 +7,8 @@ import os, math, time, glob
 import numpy as np
 from astropy.io import fits
 
+output_dtype=np.float32
+
 def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=False):
 	'''
 	Mosaic fits file of DLH survey
@@ -195,8 +197,8 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 			#initiate a mosaic cube and header
 			if num == 1:
 				nv = hdu.header['NAXIS3']
-				mdat = np.zeros([1, nv, ny, nx], dtype=np.float64)
-				mwei = np.zeros([ny, nx], dtype=np.float64)
+				mdat = np.zeros([1, nv, ny, nx], dtype=output_dtype)
+				mwei = np.zeros([ny, nx], dtype=output_dtype)
 				mcov = np.zeros([ny, nx], dtype=np.uint8)
 				mhdr = hdu.header
 				mvran = _channel2velocity(mhdr, np.array([0,mhdr['NAXIS3']-1]))
