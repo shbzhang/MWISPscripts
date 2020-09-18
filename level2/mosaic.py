@@ -76,9 +76,10 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	paths=[]
 	if path is None:
 		#no path specified, use default
-		for i in range(25):
-			paths.append(str('/share/data/mwisp/G%02d0+00/' % (i)))
-		paths.append(str('/share/data/mwisp/G%02d0+00/' % (35)))
+		paths = glob.glob('/share/data/mwisp/R*') + glob.glob('/share/data/mwisp/G*')
+		#for i in range(25):
+		#	paths.append(str('/share/data/mwisp/G%02d0+00/' % (i)))
+		#paths.append(str('/share/data/mwisp/G%02d0+00/' % (35)))
 	else:
 		#list all possible paths
 		if type(path) is type(''):
