@@ -108,7 +108,7 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	if v1 > v2:
 		v2, v1 = v1, v2
 	#return if out of MWISP range
-	if l1 < -11 or l2 > 251 or b1 < -8 or b2 > 8:
+	if l1 < -11 or l2 > 251 or b1 < -11 or b2 > 11:
 		print("Galactic coordinate is out of the range of DLH survey!")
 		print("l = 350 ~ 0 ~ 250 deg, b = -5 ~ 5 deg")
 		return
