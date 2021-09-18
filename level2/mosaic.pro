@@ -99,7 +99,7 @@ l2 = l2 mod 360 - 360*(l2 gt 300)
 lowhigh, l1, l2
 lowhigh, b1, b2
 lowhigh, v1, v2
-if l1 lt -10.5 or l2 gt 250.5 or b1 lt -7.5 or b2 gt 7.5 then begin
+if l1 lt -10.5 or l2 gt 250.5 or b1 lt -11.5 or b2 gt 11.5 then begin
   if ~silent then print,'Galactic coordinate is out of the range of DLH survey!'
   if ~silent then print,'l = 350 ~ 0 ~ 250 deg, b = -5 ~ 5 deg'
   return
