@@ -1,3 +1,8 @@
+' mwisp module: mosaic '
+
+__version__ = '1.9'
+__author__ = 'Shaobo Zhang'
+
 from astropy.io import fits
 from astropy.wcs import WCS
 import numpy as np
