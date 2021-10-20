@@ -28,7 +28,8 @@ def linear_world_to_pixel(w, wcs, base=0):
 
 def tile(files, output='tile.fits', gl_ref=180):
 	'''
-	Tile images
+	Tile images.
+	Could be used to mosaic integrated intensity maps/lv-maps/cubes from separately mosaicked datacube.
 
 	Parameters
 	----------
@@ -39,6 +40,13 @@ def tile(files, output='tile.fits', gl_ref=180):
 	Versions
 	--------
 	Nov,09,2011,v1.0
+	Examples
+	--------
+	>>> from glob import glob
+	>>> #tile lv maps
+	>>> tile(glob('*_U_lvmap.fits'))
+	>>> #tile integrated maps
+	>>> tile(glob('*_U_m0.fits'))
 	'''
 	nfile = len(files)
 	#Syntax prompt
@@ -99,5 +107,5 @@ def tile(files, output='tile.fits', gl_ref=180):
 
 if __name__ == '__main__':
 	import glob
-	files = glob.glob('*5_U_lvmap.fits')
+	files = glob.glob('*_U_lvmap.fits')
 	tile(files)
