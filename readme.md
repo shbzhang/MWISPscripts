@@ -1,7 +1,3 @@
-# Install
->- For IDL: put the folders into you IDL lib directory or add to you system variable.
->- For Python: see example
-
 # Usage
 Here are one-line descriptions and examples of procedures.
 
