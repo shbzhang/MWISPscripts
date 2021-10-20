@@ -1,6 +1,6 @@
 ' mwisp module: mosaic '
 
-__version__ = '1.9'
+__version__ = '1.10'
 __author__ = 'Shaobo Zhang'
 
 import os, math, time, glob
@@ -17,12 +17,12 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	----------
 	crange : six floats indicate gl1,gl2,gb1,gb2,velo1,velo2
 		Galactic coordinate range and velocity range (in km/s).
-	sb : str
-		ideband, for 12CO, sb='U'; for 13CO, sb='L'; for C18O, sb='L2'.
+	sb : str, optional
+		sideband, for 12CO, sb='U'; for 13CO, sb='L'; for C18O, sb='L2'. Default is 'U'.
 	path : str list, optional
-		list of the directories containing datacube, rms, and info files, default path is './'.
+		list of the directories containing datacube, rms, and info files, default path is directories in SASMA.
 	output : str, optional
-		prefix of output file names, default name is 'mosaic'.
+		prefix of output file names. Default name is 'mosaic'.
 	silent : bool, optional
 		whether to suppress message in the terminal. Default is False.
 	display : bool, optional
