@@ -2,11 +2,11 @@ One-line descriptions of procedures
 
 #level0: table preparation, data download/checking#
 >>>IDL<<<
-├|- OBSTABLE/OBSLIST: show suitable observing time for the table
-├|- MAKETABLE: use you own OFF point to write a table
-|- DLBUR: download bur files from DLH database
-|- DLFITS: download fits files from DLH database
-|- MAPFILE: quick look the number and position of files in current directory
+- OBSTABLE/OBSLIST: show suitable observing time for the table
+- MAKETABLE: use you own OFF point to write a table
+- DLBUR: download bur files from DLH database
+- DLFITS: download fits files from DLH database
+- MAPFILE: quick look the number and position of files in current directory
 >>>PYTHON<<<
 |- CELLMAP: python version of mapfile with better looking
 
