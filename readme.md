@@ -7,6 +7,7 @@ table preparation, data download/checking
 >- OBSTABLE/OBSLIST: show suitable observing time for observing tables
 >- MAKETABLE: use you own OFF point to write a observing table
 >- DLBUR: download bur files from DLH database
+> <pre><code>IDL> dlbur, range=[80, 85, -1, 2], /append </code></pre>
 >- DLFITS: download fits files from DLH database
 >- MAPFILE: have quick look at the number and position of files in current directory
 > <pre><code>IDL> mapfile, 80 </code></pre>
@@ -58,19 +59,26 @@ data reduction: datacube manipulation
 >- HREBINV: rebin datacube for channel map
 > <pre><code>IDL> hrebinv, oldcub, oldhdr, newcub, newhdr, -200, 200, 401 </code></pre>
 >- MOSAIC: mosaic cells of DLH survey
->- MOSAIC_CELL: mosaic a 30*30 arcmin cell
+> <pre><code>IDL> mosaic, 80, 100, -3, 3, -200, 200, 'U', path=['./','data/'], /display </code></pre>
 >- REPROJECT: reproject a datecube to a reference coordinate
+> <pre><code>IDL> reproject, 'old.fits', 'ref.fits', 'new.fits' </code></pre>
 >### PYTHON
 >- MOSAIC: mosaic cells of DLH survey
+> <pre><code>>>> from mosaic import mosaic
+> >>> mosaic(80, 100, -3, 3, -200, 200, sb='U', path=['./','data/']) </code></pre>
 
 data reduction: info extraction
 
 >### IDL
 >- AVERSPEC: derive the averaged spectrum of a datacube weighted with rms
+> <pre><code>IDL> spec = averspec('test.fits', rmsfile = 'test_rms.fits') </code></pre>
 >- CUBERMS: calculate rms noise for a datacube
+> <pre><code>IDL> cuberms, 'cube.fits', [-100,100], window=[-50,-30,-10,10] </code></pre>
 >- CUBEMOMENT: calculate moment for a datacube
+> <pre><code>IDL> cubemoment, 'cube.fits', [-10,10], /goodlooking, rmsfile='rms.fits', coveragefile='coverage.fits' </code></pre>
 >- CUBEMASK: mask a datacube, only keep pixels with nchannels over threshold
 >- PEAKVELOCITY: derive a peak velocity map of a datacube
+> <pre><code>IDL> peakvelocity, 'cube.fits', 'peakvelocity.fits', [-30,30] </code></pre>
 >- PVSLICE: extract position-velocity map from a datacube
 >- PVBELT: collapse position-velocity map within a belt of a datacube
 >- RMSHIST: plot histogram of the rms distribution
