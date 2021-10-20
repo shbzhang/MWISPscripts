@@ -2,8 +2,8 @@ file in &1.bur
 find
 get f
 set ang min
-set mod x -140 110
-set win -0 10 
+set mod x &2 &3
+set win &4 &5 &6 &7
 sic out bas.dat
 sic del win.bas
 file out win.bas s
