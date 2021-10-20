@@ -22,20 +22,20 @@ class CellMap(np.ndarray):
 	Examples
 	--------
 	#check observed cells
-	>>>havecube = CellMap('/share/data/mwisp/G???+00/*.fits',l=[0,20])
-	>>>havecube
+	>>> havecube = CellMap('/share/data/mwisp/G???+00/*.fits',l=[0,20])
+	>>> havecube
 
 	#change position
-	>>>havecube.l = [35,50]
-	>>>havecube.b = [-6,6]
-	>>>havecube.deluxe = True
-	>>>havecube
+	>>> havecube.l = [35,50]
+	>>> havecube.b = [-6,6]
+	>>> havecube.deluxe = True
+	>>> havecube
 	
 	#search of missing info file
-	>>>haveinfo = CellMap('/share/data/mwisp/infofiles/*info.txt')
-	>>>missinginfo = (havecube>0) & (haveinfo==0)
-	>>>missinginfo
-	>>>missinginfo.where(all=False)
+	>>> haveinfo = CellMap('/share/data/mwisp/infofiles/*info.txt')
+	>>> missinginfo = (havecube>0) & (haveinfo==0)
+	>>> missinginfo
+	>>> missinginfo.where(all=False)
 	'''
 	def __new__(cls, *patterns, l=[0,10], b=[-5,5], \
 		deluxe=False, reg=re.compile('([012]\d\d[05])([-\+][01]\d[05])')):
