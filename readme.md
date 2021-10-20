@@ -1,6 +1,11 @@
-One-line descriptions and examples of procedures
+# Install
+>- For IDL: put the folders into you IDL lib directory or add to you system variable.
+>- For Python: see example
 
-# level0
+# Usage
+Here are one-line descriptions and examples of procedures.
+
+## level0
 table preparation, data download/checking
 
 >### IDL
@@ -17,7 +22,7 @@ table preparation, data download/checking
 > >>> CellMap('data/*.fits', l=[10,30], b=[-5,6]) </code></pre>
 
 
-# level1
+## level1
 preliminary data reduction
 
 >### GILDAS
@@ -44,7 +49,7 @@ preliminary data reduction
 >- CHECKOFFSET: search for possible OFF position from 12CO datacube
 > <pre><code>IDL> checkoffset, '0810+030U.fits' </code></pre>
 
-# level2
+## level2
 data reduction: datacube manipulation
 
 >### IDL
@@ -97,7 +102,7 @@ data reduction: info extraction
 > >>> pvslice('test.fits', [[80,81,82], [-1,1,2]], width=5, step=0.2) </code></pre>
 >- REPROJECT_FITS: reproject an image to a reference coordinate
 
-# level3
+## level3
 merge data to galactic plane
 
 >### IDL
