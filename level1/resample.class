@@ -1,15 +1,3 @@
-file in &1.sum
-sic del &1.res
-file out &1.bas si
-find /all
-for i 1 to found
-get next
-set mode x &2 &3
-set win &4 &5 &6 &7 &8 &9
-base 1
-write
-next
-
 let map%beam 52
 let map%like ../grid/&1_grid.fits
 file in &1&2.sum
