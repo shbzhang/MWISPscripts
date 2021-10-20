@@ -241,6 +241,8 @@ sxaddpar,mhdr,'CRVAL1',0d
 sxaddpar,mhdr,'CRVAL2',0d
 sxaddpar,mhdr,'CRPIX1',(cx gt 21601l)?(cx-43200l):cx
 sxaddpar,mhdr,'CRPIX2',cy
+sxaddpar,mhdr,'CDELT1', -30/3600d	;add for MWISP-II
+sxaddpar,mhdr,'CDELT2', 30/3600d
 sxdelpar,mhdr,'OBJECT'
 sxdelpar,mhdr,'GLAT'
 sxdelpar,mhdr,'GLON'
