@@ -6,13 +6,13 @@ __author__ = 'Shaobo Zhang'
 import os, math, time, glob
 import numpy as np
 from astropy.io import fits
+from cuberms import cuberms
 
 output_dtype=np.float32
 
-def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=False):
+def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=False, fillrms=False):
 	'''
 	Mosaic fits file of DLH survey
-
 	Parameters
 	----------
 	crange : six floats indicate gl1,gl2,gb1,gb2,velo1,velo2
@@ -20,18 +20,18 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	sb : str
 		ideband, for 12CO, sb='U'; for 13CO, sb='L'; for C18O, sb='L2'.
 	path : str list, optional
-		list of the directories containing datacube and rms files, default path is './'.
+		list of the directories containing datacube, rms, and info files, default path is './'.
 	output : str, optional
 		prefix of output file names, default name is 'mosaic'.
 	silent : bool, optional
 		whether to suppress message in the terminal. Default is False.
 	display : bool, optional
-		whether to display the progress on a window. Default is True.	
-
+		whether to display the progress on a window. Default is True.
+	fillrms : bool, optional
+		whether to fill the cell whose rms file is missing with calculations according to mode and window recorded in info file
 	Notes
 	-----
 	All the input fits file (data and rms) must be the same as the grid define by template.	
-
 	Versions
 	--------
 	Nov,09,2011,v1.0
@@ -60,8 +60,10 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	May,17,2018,v1.8
 		fix a minor error that certain input range does not match the output range.
 	Nov,02,2018,v1.9
-		rewrite in python3	
-
+		rewrite in python3
+	Oct,20,2020,v1.10
+		revise for MWISP-II
+		add keyword 'fillrms' to mosaic cubes whose rms files are missing.
 	Examples
 	--------
 	>>> pa = ['./', '/share/data/mwisp/G020+00', '/share/data/mwisp/G030+00']
@@ -70,29 +72,10 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 
 	#Syntax prompt
 	if len(crange) != 6:
-		print("Syntax - mosaic(l1, l2, b1, b2, v1, v2, sb='U', path='./', output='mosaic', display=False, silent=False)")
+		print("Syntax - mosaic(l1, l2, b1, b2, v1, v2, sb='U', path='./', output='mosaic', display=False, silent=False, fillrms=False)")
 		return
-	#prepare paths
-	paths=[]
-	if path is None:
-		#no path specified, use default
-		paths = glob.glob('/share/data/mwisp/R*') + glob.glob('/share/data/mwisp/G*')
-		#for i in range(25):
-		#	paths.append(str('/share/data/mwisp/G%02d0+00/' % (i)))
-		#paths.append(str('/share/data/mwisp/G%02d0+00/' % (35)))
-	else:
-		#list all possible paths
-		if type(path) is type(''):
-			path=[path]
-		for apath in path:
-			if type(apath) is type(''):
-				paths += glob.glob(apath)
-	#set display
-	if display:
-		import matplotlib.pyplot as plt
-		plt.ion()
 
-	#standardize crange
+	#Parameter Checking: CRANGE
 	l1, l2, b1, b2, v1, v2 = crange
 	#modify gl in the range of -60 ~ 300 deg, since there is no observation at 300 deg for MWISP
 	l1, l2 = l1 % 360, l2 % 360
@@ -108,10 +91,36 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	if v1 > v2:
 		v2, v1 = v1, v2
 	#return if out of MWISP range
-	if l1 < -11 or l2 > 251 or b1 < -11 or b2 > 11:
-		print("Galactic coordinate is out of the range of DLH survey!")
-		print("l = 350 ~ 0 ~ 250 deg, b = -5 ~ 5 deg")
+	### Modify the range if you really need to mosaic data of your own ###
+	if l1 < -11 or l2 > 251 or b1 < -13 or b2 > 13:
+		print("Galactic coordinate is beyond the coverage of DLH survey!")
+		print("l = 0 ~ 250 deg, b = -10 ~ 10 deg")
 		return
+
+	#Parameter Checking: SB
+	sb = sb.upper()
+	if sb not in ['U','L','L2']:
+		print("Error - unknown sideband. Please specify 'U', 'L' or 'L2'.")
+		return
+
+	#Parameter Checking: PATH
+	paths=[]
+	if path is None:
+		#no path specified, use default for server 119.78.210.193
+		paths = glob.glob('/share/data/mwisp/R*') + glob.glob('/share/data/mwisp/G*')
+		paths.append('/share/data/mwisp/infofiles')
+	else:
+		#list all possible paths
+		if type(path) is str:
+			path=[path]
+		for apath in path:
+			if type(apath) is str:
+				paths += glob.glob(apath)
+
+	#set display
+	if display:
+		import matplotlib.pyplot as plt
+		plt.ion()
 
 	#shape of output FITS
 	nx = int(math.floor(l2*120) - math.ceil(l1*120) + 1)
@@ -134,6 +143,7 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 		print('Mosaic begins:')
 		print('GL from %f to %f' % (l1 % 360, l2 % 360))
 		print('GB from %f to %f' % (b1, b2))
+		print('V  from %f to %f' % (v1, v2))
 
 	count, num = 0, 0
 	for lx10 in range(fitsl1, fitsl2+1, 5):
@@ -146,13 +156,12 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 			observed = False
 			for apath in paths:
 				cubefile = os.path.join(apath, cellname+sb+'.fits')
-				#cubefile.append(glob.glob(apath))
 				if os.path.exists(cubefile):
 					observed = True
 					break
 			if not observed:
 				if not silent:
-					print('[%d/%d]FITS file for %s%s does not exist.' % (count, fitsnum, cellname, sb))
+					print('[%d/%d]%s%s - FITS file not found.' % (count, fitsnum, cellname, sb))
 				continue
 
 			#search for rms file
@@ -163,13 +172,31 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 					haverms = True
 					break
 			if not haverms:
-				if not silent:
-					print('[%d/%d]RMS file for %s%s does not exist.' % (count, fitsnum, cellname, sb))
-				continue
+				if fillrms:
+					#search for info file
+					haveinfo = False
+					for apath in paths:
+						infofile = os.path.join(apath, cellname+'_info.txt')
+						if os.path.exists(infofile):
+							haveinfo = True
+							break
+					if not haveinfo:
+						if not silent:
+							print('[%d/%d]%s%s - RMS or INFO file not found.' % (count, fitsnum, cellname, sb))
+						continue
+					else:
+						cuberms(cubefile, infofile, silent=True)
+						rmsfile = cellname+sb+'_rms.fits'
+						#if not silent:
+						#	print('[%d/%d]RMS file for %s%s is generated according to the INFO file.' % (count, fitsnum, cellname, sb))
+				else:
+					if not silent:
+						print('[%d/%d]%s%s - RMS file not found.' % (count, fitsnum, cellname, sb))
+					continue
 
 			#read cube file
 			if not silent:
-				print('[%d/%d]Mosaic file %s' % (count, fitsnum, cubefile))
+				print("[%d/%d]%s%s - Mosaic file '%s'" % (count, fitsnum, cellname, sb, cubefile))
 			hdu = fits.open(cubefile)[0]
 			if hdu.header['BITPIX'] > 0:
 				nan = (hdu.data == np.nanmax(hdu.data))
@@ -251,7 +278,7 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 				plt.pause(0.01)
 
 	if num == 0:
-		print('Error - No file in the selected region!')
+		print('Error - No data in the selected region!')
 		return
 	mwei[mwei == 0] = np.nan
 	for i in range(nv):
@@ -267,6 +294,8 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	else:
 		mhdr['CRPIX1'] = cx
 	mhdr['CRPIX2'] = cy
+	mhdr['CDELT1'] = -30/3600	#add for MWISP-II
+	mhdr['CDELT2'] = 30/3600
 	mhdr['BUNIT'] = 'K (T_MB)'
 	mhdr.remove('OBJECT')
 	mhdr.remove('GLAT')
@@ -290,7 +319,7 @@ def mosaic(*crange, sb='U', path=None, output='mosaic', silent=False, display=Fa
 	mhdu.writeto(output+'_'+sb+'_rms.fits', overwrite = True)
 	time_end = time.time()
 	if not silent:
-		print('Mosaic successfully')
+		print('Successfully mosaic %d cubes.' % (num))
 		print('Done in %f seconds.' % (time_end-time_start))
 
 def _getcellname(gl, gb):
@@ -341,4 +370,5 @@ def test(a,*b,c=0,**d):
 	print(d)
 '''
 if __name__ == '__main__':
-	mosaic(84.5,86.5,2.5,4.5,-10,10)
+	mosaic(14.75,15.75,0.75,1.75,-10,10, sb='U',path='test',fillrms=True)
+
