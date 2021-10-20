@@ -11,6 +11,7 @@ table preparation, data download/checking
 >- MAPFILE: have quick look at the number and position of files in current directory
 >### PYTHON
 >- CELLMAP: have quick look at the number and position of files in certain directories
+><pre><code> >>> cellmap('data/*.fits', l=[10,30], b=[-5,6])</code></pre>
 
 
 # level1
