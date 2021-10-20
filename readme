@@ -2,21 +2,21 @@ One-line descriptions of procedures
 
 #level0: table preparation, data download/checking#
 >>>IDL<<<
-- OBSTABLE/OBSLIST: show suitable observing time for the table
-- MAKETABLE: use you own OFF point to write a table
+- OBSTABLE/OBSLIST: show suitable observing time for observing tables
+- MAKETABLE: use you own OFF point to write a observing table
 - DLBUR: download bur files from DLH database
 - DLFITS: download fits files from DLH database
-- MAPFILE: quick look the number and position of files in current directory
+- MAPFILE: have quick look at the number and position of files in current directory
 >>>PYTHON<<<
-- CELLMAP: python version of mapfile with better looking
+- CELLMAP: have quick look at the number and position of files in certain directories
 
 #level1: preliminary data reduction#
 >>>GILDAS<<<
-- AIO: put all files in one file
-- BAS: baseline fitting
-- SUM: average spectra on each position
-- MODIFY: modify frequency from 13CO to C18O
-- MAKECUBE: regrid to datacube
+- AIO: MWISP pipeline - put all files in one file
+- BAS: MWISP pipeline - baseline fitting
+- SUM: MWISP pipeline - average spectra on each position
+- MODIFY: MWISP pipeline - modify frequency from 13CO to C18O
+- MAKECUBE: MWISP pipeline - regrid to datacube
 - AREA: quick look of integrated intensity
 - RESAMPLE: resample the spectra and make a new datacube
 >>>IDL<<<
