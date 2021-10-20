@@ -54,8 +54,9 @@ data reduction: datacube manipulation
 >- CUBECLIP: clip noise channels in a datecube
 > <pre><code>IDL> cubeclip, 'old.fits', rmsfiler='old_rms.fits', coveragefile='old_cov.fits', outputfile='new.fits' </code></pre>
 >- FITS_TRANSPOSE: transpose a datacube, e.g. from (l-b-v) to (l-v-b) or (b-v-l)
-> <pre><code>IDL> fits_transpose, 'old.fits', 'new.fits', [3,1,2] </code></pre>
+> <pre><code>IDL> fits_transpose, 'old.fits', 'new.fits', [0,2,1] </code></pre>
 >- HREBINV: rebin datacube for channel map
+> <pre><code>IDL> hrebinv, oldcub, oldhdr, newcub, newhdr, -200, 200, 401 </code></pre>
 >- MOSAIC: mosaic cells of DLH survey
 >- MOSAIC_CELL: mosaic a 30*30 arcmin cell
 >- REPROJECT: reproject a datecube to a reference coordinate
