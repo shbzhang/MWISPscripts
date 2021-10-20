@@ -21,15 +21,15 @@ table preparation, data download/checking
 preliminary data reduction
 
 >### GILDAS
->- AIO: MWISP pipeline - put all files in one file
+>- AIO: [MWISP pipeline] put all files in one file
 > <pre><code>LAS> @aio 0810+010 U </code></pre>
->- BAS: MWISP pipeline - baseline fitting
+>- BAS: [MWISP pipeline] baseline fitting
 > <pre><code>LAS> @base 0810+010U -200 200 -100 -60 -30 30 </code></pre>
->- SUM: MWISP pipeline - average spectra on each position
+>- SUM: [MWISP pipeline] average spectra on each position
 > <pre><code>LAS> @sum 0810+010U </code></pre>
->- MAKECUBE: MWISP pipeline - regrid to datacube
+>- MAKECUBE: [MWISP pipeline] regrid to datacube
 > <pre><code>LAS> @makecube 0810+010 U </code></pre>
->- MODIFY: MWISP pipeline - modify frequency from 13CO to C18O
+>- MODIFY: [MWISP pipeline] modify frequency from 13CO to C18O
 > <pre><code>LAS> @modify 0810+010 </code></pre>
 >- AREA: quick look of integrated intensity
 > <pre><code>LAS> @area 0810+010U </code></pre>
@@ -77,15 +77,24 @@ data reduction: info extraction
 >- CUBEMOMENT: calculate moment for a datacube
 > <pre><code>IDL> cubemoment, 'cube.fits', [-10,10], /goodlooking, rmsfile='rms.fits', coveragefile='coverage.fits' </code></pre>
 >- CUBEMASK: mask a datacube, only keep pixels with nchannels over threshold
+> <pre><code>IDL> cubemask, 'cube.fits', 1.5, 5 </code></pre>
 >- PEAKVELOCITY: derive a peak velocity map of a datacube
 > <pre><code>IDL> peakvelocity, 'cube.fits', 'peakvelocity.fits', [-30,30] </code></pre>
 >- PVSLICE: extract position-velocity map from a datacube
+> <pre><code>IDL> pvslice, 'cube.fits', [80,81,82], [-1,1,2], width=5, /spline </code></pre>
 >- PVBELT: collapse position-velocity map within a belt of a datacube
 >- RMSHIST: plot histogram of the rms distribution
+> <pre><code>IDL> rmshist, '0800+010', psfile='rmshist.ps', binsize=0.05, xrange=[0,1] </code></pre>
 >### PYTHON
 >- CUBERMS: calculate rms noise for a datacube
+> <pre><code>>>> from cuberms import cuberms
+> >>> cuberms('test.fits', [-200, 200], window=[-100, -60, -30, 30]) </code></pre>
 >- CUBEMOMENT: calculate moment for a datacube
+> <pre><code>>>> from cubemoment import cubemoment
+> >>> cubemoment('cube.fits', [-10,10], goodlooking=True, rmsfile='rms.fits', coveragefile='coverage.fits') </code></pre>
 >- PVSLICE: extract position-velocity map from a datacube
+> <pre><code>>>> from pvslice import pvslice
+> >>> pvslice('test.fits', [[80,81,82], [-1,1,2]], width=5, step=0.2) </code></pre>
 >- REPROJECT_FITS: reproject an image to a reference coordinate
 
 # level3
@@ -95,5 +104,9 @@ merge data to galactic plane
 >- MOSAIC_BSTRIP: mosaic cells to a 1 degree width strip along galactic latitude
 >- MERGE_BSTRIP: merge moment 0 of b-strips
 >- MWISPMERGE: merge 2-dimensional data (e.g. moment map) to galactic plane map
+> <pre><code>IDL> mwispmerge, ['a_m0.fits','b_m0.fits'], ['a_coverage.fits','b_coverage.fits'], mergefile='mwisp_m0.fits' </code></pre>
 >### PYTHON
 >- TILE: tile images from separately mosaicked datacube.
+> <pre><code>>>> from tile import tile
+> >>> from glob import glob
+> >>> tile(glob('*_U_lvmap.fits'), output='tile.fits') </code></pre>
