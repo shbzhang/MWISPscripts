@@ -200,7 +200,7 @@ def cubemoment(cubefile=None, crange=None, direction='v', threshold=-np.inf, zer
 
 
     if direction == 'L':
-        print('Creating L-V map.')
+        print('Creating B-V map.')
         #range crange --> cposition -wcs-> px --std--> prange --wcs--> realposition --> realrange
         cposition = coord.SkyCoord(crange, np.repeat(cubhdu.header['CRVAL2'],2), unit='deg', frame='galactic')
         px,py = cposition.to_pixel(w, origin=0)
@@ -237,7 +237,7 @@ def cubemoment(cubefile=None, crange=None, direction='v', threshold=-np.inf, zer
         cubhdu.writeto(outname+'_bvmap.fits', overwrite = True)
 
     elif direction == 'B':
-        print('Creating B-V map.')
+        print('Creating L-V map.')
         #range
         cposition = coord.SkyCoord(np.repeat(cubhdu.header['CRVAL1'],2), crange, unit='deg', frame='galactic')
         px,py = cposition.to_pixel(w, origin=0)
