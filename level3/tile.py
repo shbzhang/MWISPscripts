@@ -55,7 +55,7 @@ def tile(files, output='tile.fits', gl_ref=180):
 		return
 	#open a fits as basic template
 	thdr = fits.getheader(files[0])
-	thdr = modifyframe(thdr, gl_ref=180)
+	thdr = modifyframe(thdr, gl_ref)
 	try:
 		twcs = WCS(thdr, naxis=2)
 	except:
@@ -65,7 +65,7 @@ def tile(files, output='tile.fits', gl_ref=180):
 	yran = np.ndarray((nfile,2))
 	for i,afile in enumerate(files):
 		hdr = fits.getheader(afile)
-		hdr = modifyframe(hdr, gl_ref=180)
+		hdr = modifyframe(hdr, gl_ref)
 		if type(twcs) is not list:
 			wcs = WCS(hdr, naxis=2)
 			ad = wcs.pixel_to_world([0, hdr['NAXIS1']-1], [0, hdr['NAXIS2']-1])
