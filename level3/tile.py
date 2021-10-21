@@ -26,7 +26,7 @@ def linear_pixel_to_world(p, wcs, base=0):
 def linear_world_to_pixel(w, wcs, base=0):
 	return (np.array(w)-wcs['CRVAL'])/wcs['CDELT']+wcs['CRPIX']-1+base
 
-def tile(files, output='tile.fits', gl_ref=180):
+def tile(files, output='tile.fits', gl_ref=120):
 	'''
 	Tile images.
 	Could be used to mosaic integrated intensity maps/lv-maps/cubes from separately mosaicked datacube.
