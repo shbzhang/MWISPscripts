@@ -13,7 +13,7 @@ table preparation, data download/checking
 >- MAPFILE: have quick look at the number and position of files in current directory
 > <pre><code>IDL> mapfile, 80 </code></pre>
 >### PYTHON
->- CELLMAP: have quick look at the number and position of files in certain directories
+>- CELLMAP: have a quick look at the number and position of files in certain directories
 > <pre><code>>>> from cellmap import CellMap
 > >>> CellMap('data/*.fits', l=[10,30], b=[-5,6]) </code></pre>
 
