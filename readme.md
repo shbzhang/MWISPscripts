@@ -93,6 +93,9 @@ data reduction: info extraction
 >- CUBEMOMENT: calculate moment for a datacube
 > <pre><code>>>> from cubemoment import cubemoment
 > >>> cubemoment('cube.fits', [-10,10], goodlooking=True, rmsfile='rms.fits', coveragefile='coverage.fits') </code></pre>
+>- PEAKVELOCITY: calculate temperature and velocity of peak for a datacube
+> <pre><code>>>> from peakvelocity import peakvelocity
+> >>> peakvelocity('cube.fits', [-10,10]) </code></pre>
 >- PVSLICE: extract position-velocity map from a datacube
 > <pre><code>>>> from pvslice import pvslice
 > >>> pvslice('test.fits', [[80,81,82], [-1,1,2]], width=5, step=0.2) </code></pre>
