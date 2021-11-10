@@ -7,7 +7,7 @@ import os, re, warnings
 import numpy as np
 import astropy.units as u
 from astropy.io import fits
-from spectral_cube import SpectralCube
+#from spectral_cube import SpectralCube
 
 def readinfo(infofile, cellname):
 	try:
