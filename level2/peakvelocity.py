@@ -8,6 +8,7 @@ import numpy as np
 import astropy.units as u
 from astropy.io import fits
 from spectral_cube import SpectralCube
+from astropy.wcs import WCS
 
 def peakvelocity(cubefile=None, vrange=[-np.inf, np.inf], unit=u.km/u.s):
 	'''
@@ -52,20 +53,24 @@ def peakvelocity(cubefile=None, vrange=[-np.inf, np.inf], unit=u.km/u.s):
 
 	print('\nCalculate peak and velocity\n----------------')
 	warnings.filterwarnings('ignore', r'Could not parse unit')
+	
 	#read cube and slab velocity
-	hdu = SpectralCube.read(cubefile).with_spectral_unit(unit)
+	#hdu = SpectralCube.read(cubefile).with_spectral_unit(unit)
+	hdu = fits.open(cubefile)[0]
 	header = hdu.header
+
+	hdu = SpectralCube(data=np.squeeze(hdu.data),wcs=WCS(hdu.header,naxis=3)).with_spectral_unit(unit)
 	velocity = hdu.spectral_axis
 	if vrange[0]<velocity.min(): vrange[0] = velocity.min()
 	if vrange[1]>velocity.max(): vrange[1] = velocity.max()
-	subcube = hdu.spectral_slab(*vrange)._data
+	subhdu = hdu.spectral_slab(*vrange)
 
 	#calculate
-	subcube = np.squeeze(subcube)
+	subcube = np.squeeze(subhdu._data)
 	tpeakdata = np.nanmax(subcube, axis=0)
 	subcube[~np.isfinite(subcube)] = -np.inf
 	peakidx = np.argmax(subcube, axis=0)
-	vpeakdata = velocity.value[peakidx]
+	vpeakdata = subhdu.spectral_axis.value[peakidx].astype(np.float32)
 
 	for kwd in ['NAXIS','CTYPE','CRVAL','CRPIX','CDELT']:
 		header.remove(kwd+'3')
@@ -88,4 +93,4 @@ def peakvelocity(cubefile=None, vrange=[-np.inf, np.inf], unit=u.km/u.s):
 
 
 if __name__ == '__main__':
-	peakvelocity('/Users/sz268601/Work/DeepOutflow/procedure/prediction/028.825+1.275+000_U.fits')
+	peakvelocity('/Users/sz268601/Work/DeepOutflow/procedure/prediction/028.825+1.275+000_U.fits',[10,20])
