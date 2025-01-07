@@ -37,6 +37,8 @@
 ;  fix spelling mistakes.
 ;May,17,2018,v1.8
 ;  fix a minor error that certain input range does not match the output range.
+;Jan,12,2023,v2.0
+;  correct the CDELT1 error when MWISP-2 data are involving.
 
 function getcellname, gl, gb
 ;get cell name from its gl and gb
